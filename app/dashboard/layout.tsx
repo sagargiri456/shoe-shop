@@ -5,8 +5,18 @@ import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
+import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import { redirect } from "next/navigation";
 
-export default function DashboardLayout({ children }: { children: ReactNode }) {
+export default async function DashboardLayout({ children }: { children: ReactNode }) {
+
+  const {getUser} = getKindeServerSession()//Creating a Session.
+  const user = await getUser()
+
+  if(!user){
+    return redirect("/")
+  }
+  
   return (
     <div className="flex w-full flex-col max-w-7xl mx-auto sm:px-6 lg:px-8">
       <header className="sticky top-0 flex h-16 items-center justify-between p-2 gap-4 border-b bg-white">
@@ -18,7 +28,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         {/* Sheet component for smaller devices */}
         <Sheet>
           <SheetTrigger asChild>
-            <Button>
+            <Button asChild>
               <MenuIcon className="h-5 w-5" />
             </Button>
           </SheetTrigger>
@@ -33,7 +43,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
         <DropdownMenu>
           <DropdownMenuTrigger>
-            <Button variant={"secondary"} size="icon" className="rounded-4">
+            <Button asChild variant={"secondary"} size="icon" className="rounded-4">
               <CircleUser className="w-5 h-5"/>
             </Button>
           </DropdownMenuTrigger>
@@ -44,7 +54,10 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           </DropdownMenuContent>
         </DropdownMenu>
       </header>
-      {children}
+      <main className="my-5">
+        {children}
+      </main>
+      
     </div>
   );
 }
