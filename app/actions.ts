@@ -11,7 +11,7 @@ export async function createProduct(prevState: unknown, formData: FormData) {
     const { getUser } = getKindeServerSession();
     const user = await getUser();
   
-    if (!user || user.email !== "jan@alenix.de") {
+    if (!user || user.email !== "sagargiri456@gmail.com") {
       return redirect("/");
     }
   
@@ -36,6 +36,7 @@ export async function createProduct(prevState: unknown, formData: FormData) {
         isFeatured: submission.value.isFeatured === true ? true : false,
       },
     });
+    console.log("createProduct server action is called !")
   
     redirect("/dashboard/products");
 }

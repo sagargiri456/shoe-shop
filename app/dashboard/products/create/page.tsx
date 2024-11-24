@@ -24,7 +24,6 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { ChevronLeft, XIcon } from "lucide-react";
 import Link from "next/link";
-import { useFormState } from "react-dom";
 import { useForm } from "@conform-to/react";
 import { parseWithZod } from "@conform-to/zod";
 import { productSchema } from "@/app/lib/zodSchema";
@@ -32,6 +31,7 @@ import { useActionState, useState } from "react";
 
 import Image from "next/image";
 import { SubmitButton } from "@/app/components/SubmitButtons";
+import { categories } from "@/app/lib/categories";
 // import { categories } from "@/app/lib/categories";
 // import { SubmitButton } from "@/app/components/SubmitButtons";
 
@@ -39,12 +39,36 @@ export default function ProductCreateRoute() {
   const [images, setImages] = useState<string[]>([]);
   const [lastResult, action] = useActionState(createProduct, undefined);
   const [form, fields] = useForm({
+
+    /*
+    lastResult
+      The result of the last submission. This is usually sent from the server 
+      and will be used as the initial state of the form for progressive enhancement.
+    */
     lastResult,
+    
+      /*
+      onValidate
+      A function to be called when the form should be (re)validated.
+      */
+    
 
     onValidate({ formData }) {
       return parseWithZod(formData, { schema: productSchema });
     },
 
+
+    
+      /*
+      shouldValidate
+    Define when Conform should start validating each field with 3 options: 
+    onSubmit, onBlur and onInput. Default to onSubmit.
+
+    shouldRevalidate
+    Define when Conform should re-validate each field after it is validated. 
+    Default to the value of shouldValidate.
+      */
+    
     shouldValidate: "onBlur",
     shouldRevalidate: "onInput",
   });
@@ -149,11 +173,11 @@ export default function ProductCreateRoute() {
                   <SelectValue placeholder="Select Category" />
                 </SelectTrigger>
                 <SelectContent>
-                  {/* {categories.map((category) => (
+                  {categories.map((category) => (
                     <SelectItem key={category.id} value={category.name}>
                       {category.title}
                     </SelectItem>
-                  ))} */}
+                  ))}
                 </SelectContent>
               </Select>
               <p className="text-red-500">{fields.category.errors}</p>
